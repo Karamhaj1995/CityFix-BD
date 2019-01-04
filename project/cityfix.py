@@ -16,8 +16,7 @@ if __name__ == '__main__':
     setting = dict(
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
         static_path=os.path.join(os.path.dirname(__file__), "static"),
-        xsrf_cookies=True,
-        cookie_secret=cookies_secret,
+        xsrf_cookies=False,
         login_url="/login",
         autoescape=None,
         debug=True,

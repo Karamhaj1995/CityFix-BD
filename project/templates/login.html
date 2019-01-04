@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title%}Karam Test{% end %}
+
+{% block content %}
+
+<div class="lg-content">
+
+	<div class="title">B & D</div>
+
+	<div class="lg-form">
+        {% module xsrf_form_html() %}
+		<input id="username" type="text" name="username" placeholder="اسم المستخدم" />
+		<input id="password" type="password" name="password" placeholder="كلمة المرور" />
+		<div class="fixer">
+			<button id="login">ادخل</button>
+			<button id="moveToRegister">سجل</button>
+		</div>
+	</div>
+
+</div>
+
+<script>
+	
+
+$(document).ready(function(){
+
+});
+
+$('#moveToRegister').on('click', function(){
+	window.location.replace('/register')
+});
+
+$('#login').on('click', function(){
+    $.ajax({
+    	type: "POST",
+    	url: 'api/v1/users',
+    	data: {"method": "login", "username": $('#username').val(), "password": $('#password').val()},
+    	success: function(data){
+    		if(data["user"].hasOwnProperty("_id")) {
+    			window.location.replace('/')
+    		} else {
+
+    		}
+    	},
+    	error: function(){
+    		console.log('sometihng wrong')
+    	}
+    });
+});
+
+</script>
+
+{% end %}

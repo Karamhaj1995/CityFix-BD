@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title%}Karam Test{% end %}
+{% block content %}
+<div class="lg-content">
+
+    <form class="lg-form" method="POST">
+        {% module xsrf_form_html() %}
+        <input id="username" type="text" name="name" placeholder="اسم المستخدم" />
+        <input id="password" type="password" name="password" placeholder="كلمة المرور" />
+        <button id="register">سجل</button>
+    </form>
+
+</div>
+
+{% block js %}
+
+<script>
+
+    $(document).ready(function(){
+
+    });
+
+    $('#register').on('click', function(){
+        // $.ajax({
+        // 	type: "POST",
+        // 	url: 'api/v1/users',
+        // 	data: {"name":$('#username').val(), "password": $('#password').val()},
+        // 	success: function(){
+        // 		window.location.replace('/login')
+        // 	},
+        // 	error: function(){
+        // 		console.log('error ya 5ra')
+        // 	}
+        // });
+    }); 
+
+</script>
+
+{% end %}
+
+{% end %}

@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <title>First Tornado</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Baloo+Bhaijaan" rel="stylesheet">
+        <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="static\css\base.css" rel="stylesheet">
+        <link href="static\css\login.css" rel="stylesheet">
+        <link href="static\css\index.css" rel="stylesheet">
+        <script src={{ static_url("js/base.js") }}></script>
+    </head>
+    <body dir="rtl">
+        <header>
+            <div class="toggleMenu">
+                <div class="fa fa-bars"></div>
+            </div>
+            <div class="logo">
+                <div class="fa">B & D</div>
+            </div>
+            <div class="toggleProfile">
+                <div class="fa fa-user"></div>
+            </div>
+        </header>
+        <div class="menu">
+            <div class="menuItem"><a href="/"><i class="fa fa-home"></i>الرئيسية</a></div>
+            <div class="menuItem"><a href="#"><i class="fa fa-map"></i>الخريطة</a></div>
+            <div class="menuItem"><a href="#"><i class="fa fa-warning"></i>التبليغات</a></div>
+            <div class="menuItem"><a href="#"><i class="fa fa-envelope"></i>الرسائل</a></div>
+            <div class="menuItem"><a href="#"><i class="fa fa-check"></i>من نحن</a></div>
+            <div class="menuItem"><a href="#"><i class="fa fa-phone"></i>تواصل معنا</a></div>
+            <div class="menuItem"><a href="/login"><i class="fa fa-sign-out"></i>تسخيل الخروج</a></div>
+        </div>
+        <content>
+            {% block content %}
+            
+            {% end %}
+        </content>
+        <div class="messageCenter">
+            
+        </div>
+    </body>
+</html>

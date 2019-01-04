@@ -1,0 +1,158 @@
+html, body, input, button {
+	margin:0;
+	padding:0;
+	font-size:14px !important;
+	font-family: 'Baloo Bhaijaan', cursive !important;
+}
+
+* {
+	outline: none !important;
+}
+
+header {
+	width: 100%;
+    height: 50px;
+    padding: 0;
+    margin: 0;
+    color: white;
+    background: #a77d00;
+    position: relative;
+}
+
+	.toggleMenu {
+		width: 10%;
+	    position: absolute;
+	    height: 50px;
+	    text-align: center;
+	    top: 0;
+	    right: 0;
+	}
+
+	.toggleMenu .fa {
+		font-size: 32px;
+    	margin-top: 9px;
+	}
+
+	.toggleProfile {
+		width: 10%;
+	    position: absolute;
+	    height: 50px;
+	    text-align: center;
+	    top: 0;
+	    left: 0;
+	}
+
+	.toggleProfile .fa {
+		font-size: 32px;
+    	margin-top: 9px;
+	}
+
+	.logo {
+		width: 20%;
+	    position: absolute;
+	    height: 50px;
+	    text-align: center;
+	    top: 0;
+	    left: 40%;
+	    font-size: 32px;
+	}
+
+	.logo .fa {
+	    margin-top: 9px;
+    	font-family: fantasy;
+	}
+
+.menu {
+	width: 0;
+    padding: 0;
+    margin: 0;
+    z-index: 100;
+    height: -webkit-fill-available;
+    top: 50px;
+    right: 0;
+    display: block;
+    background: #a77d00;
+    opacity: 0;
+}
+
+	.menu .menuItem {
+		width: 100%;
+	    font-size: 16px;
+		color: white;
+	    border-bottom: 1px solid;
+	}
+
+	.menu .menuItem a {
+		color: white;
+		text-align: center;
+		padding: 5px;
+		display: grid;
+		text-decoration-line: none;
+	}
+
+	.menu .menuItem:first-child {
+	    border-top: 1px solid;
+	}
+
+content {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    display: inline-block;
+}
+
+.messageCenter {
+    z-index: 10000000;
+    width: 90%;
+    position: absolute;
+    top: 15%;
+    right: 5%;
+    box-shadow: 0 2px 10px 1px #bdbdbd;
+    border-radius: 10px;
+    background: white;
+    text-align: center;
+    font-size: x-large;
+    display: none;
+}
+
+.eventsHeader {
+	text-align: right;
+	margin: 10px;
+}
+
+.eventNotifcation {
+	font-size: 12px;
+    display: inline-grid;
+    width: 100%;
+    height: 75px;
+    position: relative;
+    margin-top: 5px;
+}
+
+.eventTitle {
+	margin: 0;
+    position: absolute;
+    color: black;
+}
+
+.eventDescription {
+	margin: 0;
+    position: absolute;
+    color: black;
+    top: 20px;
+    right: 10px;
+    font-size: 10px;
+    text-align: right;
+}
+
+.eventAnswer {
+	position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.eventAnswer i {
+    margin: 5px;
+}

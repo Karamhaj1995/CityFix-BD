@@ -1,0 +1,442 @@
+{% extends "base.html" %}
+{% block title%}Karam Test{% end %}
+{% block content %}
+
+	<div class="main_content">
+		<button id="report_hazard">تقديم بلاغ</button>
+		<div id="map"></div>
+		<div class="toggleCollapseMain" toggle="latest_hazards">اخر البلاغات</div>
+		<div id="latest_hazards">
+			{% from datetime import datetime %}
+			{% for hazard in parameters['latest_hazards'] %}
+			<div class="hazardItem">
+				<img class="hazardItemImage" />
+				<p class="hazardItemTitle">{{ hazard['title'] }}</p>
+				<p class="hazardItemDescription">{{ hazard['description'] }}</p><br>
+				<p class="hazardItemTime">{{ hazard['datetime'].__str__().split('.')[0] }} - {{ escape(hazard['location']['FullAddress']) }}</p>
+			</div>
+			{% end %}
+		</div>
+		<div class="toggleCollapseMain" toggle="last_day_graph">بلاغات اخر يوم</div>
+		<div id="last_day_graph"></div>
+		<button id="show_current_events">اظهار الدعوات</button>
+	</div>
+
+	<div class="add_hazard_modal">
+		<div class="modal_layout">
+
+			<div class="modal_header">
+				<div class="modal_exit">
+					<i class="fa fa-remove"></i>
+				</div>
+			</div>
+
+			<form class="modal_content">
+				<div class="hazard_images_holder" current_images="0">
+					add picture
+				</div>
+				{% module xsrf_form_html() %}
+				<input type="text" name="datetime" readonly>
+				<input type="text" name="fulladdress">
+				<input type="text" name="lat" placeholder="lat" style="display: none;" />
+				<input type="text" name="lng" placeholder="lng" style="display: none;" />
+				<input type="text" name="title">
+				<textarea name="description"></textarea>
+			</form>
+
+			<div class="modal_footer">
+				<button id="add_report_hazard">بلغ</button>
+			</div>
+		</div>
+	</div>
+
+
+<!-- <script type="text/javascript" src="cordova.js"></script> -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzGO22_aeNE4G9JVFKjWKSnnQGbL2obb8&language=ar"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+
+	var datetime;
+	var map;
+	var hazards;
+	var pos;
+	var marker;
+	var geocoder;
+	var myOptions;
+	
+	$(document).ready(function(){
+		initMap();
+		initGraph();
+	});
+
+	function initMap() {
+
+	    myOptions = {
+	        zoom: 10,
+	        mapTypeId: google.maps.MapTypeId.ROADMAP,
+	        mapTypeControl: false,
+	        navigationControlOptions: { style: google.maps.NavigationControlStyle.SMALL },
+	        disableDefaultUI: true,
+	        zoomControl: false,
+	        styles: [
+				    {
+				        "elementType": "labels",
+				        "stylers": [
+				            {
+				                "visibility": "off"
+				            },
+				            {
+				                "color": "#f49f53"
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "landscape",
+				        "stylers": [
+				            {
+				                "color": "#f9ddc5"
+				            },
+				            {
+				                "lightness": -7
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "road",
+				        "stylers": [
+				            {
+				                "color": "#813033"
+				            },
+				            {
+				                "lightness": 43
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "poi.business",
+				        "stylers": [
+				            {
+				                "color": "#645c20"
+				            },
+				            {
+				                "lightness": 38
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "water",
+				        "stylers": [
+				            {
+				                "color": "#1994bf"
+				            },
+				            {
+				                "saturation": -69
+				            },
+				            {
+				                "gamma": 0.99
+				            },
+				            {
+				                "lightness": 43
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "road.local",
+				        "elementType": "geometry.fill",
+				        "stylers": [
+				            {
+				                "color": "#f19f53"
+				            },
+				            {
+				                "weight": 1.3
+				            },
+				            {
+				                "visibility": "on"
+				            },
+				            {
+				                "lightness": 16
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "poi.business"
+				    },
+				    {
+				        "featureType": "poi.park",
+				        "stylers": [
+				            {
+				                "color": "#645c20"
+				            },
+				            {
+				                "lightness": 39
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "poi.school",
+				        "stylers": [
+				            {
+				                "color": "#a95521"
+				            },
+				            {
+				                "lightness": 35
+				            }
+				        ]
+				    },
+				    {},
+				    {
+				        "featureType": "poi.medical",
+				        "elementType": "geometry.fill",
+				        "stylers": [
+				            {
+				                "color": "#813033"
+				            },
+				            {
+				                "lightness": 38
+				            },
+				            {
+				                "visibility": "off"
+				            }
+				        ]
+				    },
+				    {},
+				    {},
+				    {},
+				    {},
+				    {},
+				    {},
+				    {},
+				    {},
+				    {},
+				    {},
+				    {},
+				    {
+				        "elementType": "labels"
+				    },
+				    {
+				        "featureType": "poi.sports_complex",
+				        "stylers": [
+				            {
+				                "color": "#9e5916"
+				            },
+				            {
+				                "lightness": 32
+				            }
+				        ]
+				    },
+				    {},
+				    {
+				        "featureType": "poi.government",
+				        "stylers": [
+				            {
+				                "color": "#9e5916"
+				            },
+				            {
+				                "lightness": 46
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "transit.station",
+				        "stylers": [
+				            {
+				                "visibility": "off"
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "transit.line",
+				        "stylers": [
+				            {
+				                "color": "#813033"
+				            },
+				            {
+				                "lightness": 22
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "transit",
+				        "stylers": [
+				            {
+				                "lightness": 38
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "road.local",
+				        "elementType": "geometry.stroke",
+				        "stylers": [
+				            {
+				                "color": "#f19f53"
+				            },
+				            {
+				                "lightness": -10
+				            }
+				        ]
+				    },
+				    {},
+				    {},
+				    {}
+			]
+		};
+		geocoder = new google.maps.Geocoder;
+	    map = new google.maps.Map(document.getElementById("map"), myOptions);
+
+	    navigator.geolocation.getCurrentPosition(function(position) {
+		    pos = {
+		        lat: position.coords.latitude,
+		        lng: position.coords.longitude
+		    };
+		    marker = new google.maps.Marker({
+	          position: pos,
+	          map: map
+	        });
+		    map.setCenter(pos);
+	    }, function(err) {
+	    	console.log(err)
+	    });
+	}
+	
+	function initGraph() {
+		$.getJSON('api/v1/hazards', {}, function(data){
+			var datetime = "";
+			var dataPoint = [];
+			var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+			$.each(data['results'], function(a, b){
+				hazard = JSON.parse(b)
+				dataPoint.push({ x: new Date(hazard['datetime']['$date']), y: 5 });
+				marker = new google.maps.Marker({
+					position: {lat: parseFloat(hazard['lat']), lng: parseFloat(hazard['lng'])},
+					title: hazard['title'],
+					icon: image,
+					map:map
+				});
+			});
+			var chart = new CanvasJS.Chart("last_day_graph",{
+				axisX: {
+					labelFormatter: function (e) {
+						return CanvasJS.formatDate(e.value, "DDD HH:mm:ss");
+					},
+				},					
+				data: [
+				{
+					type: "spline",
+					dataPoints: dataPoint
+				}
+				]                      
+			});
+			chart.render();
+		});
+	}
+
+	function changePosition(position) {
+	    newLat = position.coords.latitude;
+	    newLng = position.coords.longitude;
+	    pos = new google.maps.LatLng(newLat, newLng);
+	    map.setCenter(pos);
+	    marker = new google.maps.Marker({ position: pos, map: map, animation: google.maps.Animation.DROP });
+	}
+
+	$('#report_hazard').on('click', function(){
+		$('.add_hazard_modal').show(50);
+		$('input[name="datetime"]').val(new Date());
+		navigator.geolocation.getCurrentPosition(function(position) {
+		    pos = {
+		        lat: position.coords.latitude,
+		        lng: position.coords.longitude
+		    };
+		    $('input[name="lat"]').val(pos.lat);
+		    $('input[name="lng"]').val(pos.lng);
+		    geocodeLatLng(geocoder, pos, map, $('input[name="fulladdress"]'))
+	    }, function(err) {
+	    	console.log(err)
+	    });
+	});
+
+	$('#add_report_hazard').on('click', function(){
+		$.ajax({
+			type: "POST",
+			url: 'api/v1/hazards',
+			data: $('form').serialize(),
+			success: function(data){
+				// showAllHazards();
+				$('form')[0].reset();
+				$('.add_hazard_modal').hide(50);
+				showMessage('شكرا على المشاركة :)', 2000);
+			},
+			error: function(){
+				console.log('error ya 5ra')
+			}
+		});
+	});
+
+	$('.modal_exit').on('click', function(){
+		$('.add_hazard_modal').hide(50);
+	});
+
+	$("#show_current_events").on('click', function(){
+		var content = "<p class='eventsHeader'><i class='fa fa-calendar'></i>دعوات عامة</p>";
+		content += "<div class='eventNotifcation'>";
+		content += "<p class='eventTitle'>دعوة عامة للجميع ندعوكم جميعاً</p>";
+		content += "<p class='eventDescription'>بلدية الطيبة ممثلة بإدارتها وطاقم موظفيها وموظفاتها وجميع مؤسساتها تتقدم لأبناء الطيبة خاصة ومجتمعنا العربي وعالمنا الإسلامية عامة</p>";
+		content += "<div class='eventAnswer'><i class='fa fa-thumbs-up'></i><i class='fa fa-thumbs-down'></i></div>"
+		content += "</div>";
+		content += "<div class='eventNotifcation'>";
+		content += "<p class='eventTitle'>في ذكرى المولد النبوي الشريف</p>";
+		content += "<p class='eventDescription'>بأسمى الأماني والتهاني مع حلول ذكرى مولد نبينا ورسولنا محمد بن عبد الله صلى الله عليه وسلم. وترجو من المولى عز وجل أن نتحلى بخلقه ونسير على هديه وسنته.</p>";
+		content += "<div class='eventAnswer'><i class='fa fa-thumbs-up'></i><i class='fa fa-thumbs-down'></i></div>"
+		content += "</div>";
+		content += "</div>";
+		content += "<div class='eventNotifcation'>";
+		content += "<p class='eventTitle'>بلدية الطيبة: فعاليات ترفيهية تربوية في روضات المدينة </p>";
+		content += "<p class='eventDescription'>بادر قسم الروضات في البلدية بعقد نشاطات ترفيهية تربوية وحركية لأطفال الروضات في المدينة. الفعاليات تخللت نشاطات متعددة، شملت قسم من الروضات</p>";
+		content += "<div class='eventAnswer'><i class='fa fa-thumbs-up'></i><i class='fa fa-thumbs-down'></i></div>"
+		content += "</div>";
+		showMessage(content, 200000);
+	});
+
+	function geocodeLatLng(geocoder, pos, map, element) {
+		geocoder.geocode({'location': pos}, function(results, status) {
+			if (status === 'OK') {
+			 	if (results[0]) {
+					var address = results[2].formatted_address;
+					address = address.split('،')
+					element.val(address[0] + ", " + address[1]);
+			 	} else {
+					element.val("خطأ في تحديد المكان !");
+			 	}
+			} else {
+				window.alert('Geocoder failed due to: ' + status);
+			}
+		});
+	}
+
+	function showMessage(message, time) {
+		$('.messageCenter').html(message)
+		$('.messageCenter').show(500)
+		setTimeout(function() {
+	        $('.messageCenter').hide(500);
+	    }, time);
+	}
+
+	function showAllHazards() {
+		$.ajax({
+			type: "GET",
+			url: 'api/v1/hazards',
+			data: { 'limit': 1 },
+			success: function(data){
+				console.log(JSON.parse(data))
+			},
+			error: function(){
+				console.log('error ya 5ra')
+			}
+		});
+	}
+
+	$('.toggleCollapseMain').on('click', function(){
+		$(this).next().toggle(function() { $(this).next().slideUp() }, function(){ $(this).next().slideDown(); });
+	});
+
+</script>
+{% end %}
